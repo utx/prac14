@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Test 14</title>
+<style>
+  :root {
+    --ink: #1b2a41;
+    --ink-soft: #55627a;
+    --line: #d8dde6;
+    --paper: #ffffff;
+    --field: #f3f5f8;
+    --pitch: #2e7d4f;
+    --pitch-deep: #23603c;
+    --correct: #1e8e5a;
+    --wrong: #c43d3d;
+    --correct-bg: #e6f5ec;
+    --wrong-bg: #fbe9e9;
+    --amber: #b8860b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--field); color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  header {
+    background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 5;
+  }
+  .bar { max-width: 960px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 20px; }
+  .bar .title { font-weight: 600; }
+  .bar .section-name { color: #c6d0e0; }
+  .bar .spacer { flex: 1; }
+
+  main { max-width: 960px; margin: 28px auto 80px; padding: 0 24px; }
+  .sheet { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 32px 40px; }
+  h1 { font-size: 28px; margin: 0 0 6px; font-weight: 700; }
+  h2 { font-size: 22px; margin: 0 0 16px; font-weight: 700; }
+  p.lead { color: var(--ink-soft); margin: 0 0 20px; }
+
+  .instructions ol { padding-left: 22px; }
+  .instructions li { margin-bottom: 6px; }
+  .plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 22px 0 28px; }
+  .plan div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .plan strong { display: block; margin-bottom: 4px; }
+  .plan span { color: var(--ink-soft); font-size: 15px; }
+
+  button.primary {
+    background: var(--pitch); color: #fff; border: 0; border-radius: 6px; font-size: 17px; font-weight: 600;
+    padding: 12px 26px; cursor: pointer; font-family: inherit;
+  }
+  button.primary:hover { background: var(--pitch-deep); }
+  button.primary:focus-visible, .option:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+  /* passage + questions */
+  .two-col { display: grid; grid-template-columns: 5fr 6fr; gap: 40px; align-items: start; }
+  .passage { position: sticky; top: 76px; }
+  .passage-note { margin: 0 0 14px; font-style: italic; color: var(--ink-soft); }
+
+  .question { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+  .question:last-of-type { border-bottom: 0; }
+  .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+  .qnum { font-weight: 700; min-width: 26px; }
+  .stem { margin: 0; }
+  .stem em.speaker { font-style: normal; font-weight: 600; }
+  .stem .facts { margin: 8px 0 0 0; padding-left: 20px; }
+  .stem .facts li { margin: 2px 0; }
+  .stem .quote { margin: 10px 0 0 0; padding: 10px 14px; background: var(--field); border-left: 3px solid var(--line); border-radius: 0 4px 4px 0; }
+  .options { display: grid; gap: 8px; margin: 14px 0 0 38px; }
+  .option {
+    display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .option:hover { border-color: var(--ink-soft); }
+  .option .letter { flex: 0 0 28px; height: 28px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .option.selected { border-color: var(--ink); background: #eef2f8; }
+  .option.selected .letter { background: var(--ink); color: #fff; }
+
+  .submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+  .submit-row .status { color: var(--ink-soft); font-size: 15px; }
+
+
+  /* prose passage */
+  .prose { font-family: Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.6; }
+  .prose h3 { font-family: inherit; font-size: 22px; margin: 0 0 14px; font-weight: 700; }
+  .prose p { margin: 0 0 12px; }
+  .passage { max-height: calc(100vh - 100px); overflow-y: auto; padding-right: 8px; }
+
+
+  /* poem passage */
+  .poem { font-size: 17px; line-height: 1.6; }
+  .poem .stanza { margin: 0 0 18px; position: relative; padding-left: 32px; }
+  .poem .stanza .vn { position: absolute; left: 0; top: 1px; font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px; color: var(--ink-soft); }
+  .poem .stanza .line { display: block; }
+
+
+
+  /* letter-only options and shared option lists */
+  .options.letters { grid-template-columns: repeat(5, 54px); gap: 10px; }
+  .options.letters .option { justify-content: center; padding: 9px; }
+  .choice-list { border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin: 0 0 26px; }
+  .choice-list ol { list-style: none; margin: 0; padding: 0; }
+  .choice-list li { display: flex; gap: 12px; margin-bottom: 8px; }
+  .choice-list li:last-child { margin-bottom: 0; }
+  .choice-list .letter { flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+
+
+  /* multi-extract passage */
+  .extract { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; }
+  .extract h4 { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; margin: 0 0 6px; letter-spacing: .02em; }
+  .extract p { margin: 0; font-size: 16px; line-height: 1.55; }
+  .options.letters.four { grid-template-columns: repeat(4, 54px); }
+
+  /* cloze gaps */
+  .gap { color: var(--ink-soft); }
+  .gap.filled { color: var(--ink); font-weight: 600; background: #eef2f8; box-shadow: inset 0 -2px 0 var(--pitch); }
+  .gap.filled.correct { color: var(--correct); background: var(--correct-bg); box-shadow: inset 0 -2px 0 var(--correct); }
+
+  /* data tables inside stems */
+  table.grid { border-collapse: collapse; margin: 10px 0 0; font-size: 16px; }
+  table.grid th, table.grid td { border: 1px solid var(--ink); padding: 5px 14px; text-align: left; }
+  table.grid th { background: var(--field); font-weight: 600; }
+
+  /* visual (picture) options */
+  .options.visual { grid-template-columns: repeat(auto-fit, minmax(0, max-content)); gap: 14px; }
+  .options.visual .option { flex-direction: column; align-items: center; gap: 8px; padding: 10px; }
+  .options.visual .option .letter { flex: none; width: 28px; height: 28px; }
+  .options.visual .option svg { display: block; }
+  @media (max-width: 760px) { .options.visual { grid-template-columns: repeat(2, max-content); } }
+
+
+  /* v7 additions */
+  .stem .note { margin: 0 0 8px; font-style: italic; color: var(--ink-soft); font-size: 15px; }
+  .stem ol.statements { margin: 10px 0 0; padding-left: 26px; }
+  .stem ol.statements li { margin: 4px 0; padding-left: 4px; }
+  .figure { margin: 12px 0; }
+  .figure svg { display: block; max-width: 100%; height: auto; }
+  .option svg { display: block; max-width: 100%; height: auto; }
+  .option:has(svg) { align-items: center; }
+  .digit-cards { display: flex; gap: 22px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .digit-card { width: 80px; height: 106px; border: 1.5px solid var(--ink); border-radius: 10px; background: #fdf3e1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .digit-card span { font-size: 56px; font-weight: 700; line-height: 1; }
+  .digit-card small { font-size: 12px; margin-top: 6px; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; max-width: 100%; }
+  @media (max-width: 760px) { table.grid th, table.grid td { padding: 4px 8px; font-size: 14px; } }
+  .poem .stanza .line { padding-left: 1.2em; text-indent: -1.2em; }
+  .tags { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .tag { border: 1.5px solid var(--ink); border-radius: 8px 22px 22px 8px; padding: 8px 22px 8px 14px; background: #fdf3e1;
+    display: flex; flex-direction: column; min-width: 96px; }
+  .tag small { font-size: 13px; color: var(--ink-soft); }
+  .tag span { font-size: 22px; font-weight: 700; }
+  .hrow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 22px; margin: 14px 0 16px; }
+  .hnum { display: inline-flex; gap: 3px; }
+  .hnum .dig, .hnum .hid { width: 30px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+    border: 2px solid var(--ink); border-radius: 5px; font-size: 22px; font-weight: 700; background: #fff; }
+  .hnum .hid { background: var(--ink); color: #fff; font-size: 18px; }
+  .hnum .hid.sq { color: #f2c14e; }
+  .hnum .hid.tri { color: #8fd3c7; }
+  .explain .skill { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+
+  /* review */
+  .result-line { display: flex; gap: 10px; align-items: center; font-weight: 600; margin-bottom: 10px; }
+  .badge { padding: 2px 10px; border-radius: 4px; font-size: 14px; }
+  .badge.ok { background: var(--correct-bg); color: var(--correct); }
+  .badge.no { background: var(--wrong-bg); color: var(--wrong); }
+  .option.is-correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option.is-correct .letter { border-color: var(--correct); background: var(--correct); color: #fff; }
+  .option.is-wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option.is-wrong .letter { border-color: var(--wrong); background: var(--wrong); color: #fff; }
+  .option[disabled] { cursor: default; }
+  .explain { margin: 14px 0 0 38px; padding: 14px 16px; background: var(--field); border-radius: 6px; font-size: 16px; }
+  .explain p { margin: 0 0 8px; }
+  .explain p:last-child { margin: 0; }
+  .explain .why-not { color: var(--ink-soft); }
+
+  .section-score { font-size: 18px; margin: 0 0 24px; }
+  .section-score b { font-size: 26px; }
+
+  /* final */
+  .final-score { text-align: center; padding: 20px 0 10px; }
+  .final-score .big { font-size: 64px; font-weight: 700; line-height: 1; }
+  .final-score .of { color: var(--ink-soft); font-size: 20px; }
+  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 26px 0 30px; }
+  .breakdown div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .breakdown strong { display: block; font-size: 24px; }
+  .breakdown span { color: var(--ink-soft); font-size: 15px; }
+  .verdict { margin: 0 0 24px; }
+  .center { text-align: center; }
+
+  @media (max-width: 760px) {
+    .two-col { grid-template-columns: 1fr; }
+    .passage { position: static; }
+    .plan, .breakdown { grid-template-columns: 1fr; }
+    .sheet { padding: 22px; }
+    .options, .explain { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .option { transition: background .12s, border-color .12s; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <span class="title">Practice Test 14</span>
+    <span class="section-name" id="hdr-section"></span>
+    <span class="spacer"></span>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* ---------------------------------------------------------------
+   TEST CONTENT — Practice Test 14
+   --------------------------------------------------------------- */
+
+let passMode = "answer";
+const INK = "#1b2a41";
+
+/* ---- Reading: four extracts on one theme ---- */
+const EXTRACTS = [
+  `At Casey Station in Antarctica, the winter sun barely rises. For weeks at a time the researchers work under a sky that never grows properly light, and the ice plateau stretches away from the buildings like an enormous white page that nobody has written on yet. The only sounds are the wind and the hum of the generators.`,
+  `Mei gripped the rail so tightly that her knuckles went white. The ice looked very hard and very far down. Then her cousin took both her hands and pulled her, one wobbly step at a time, into the middle of the rink. Somewhere on the third lap, Mei realised she had let go of her cousin’s hands, and that she was laughing.`,
+  `To make ice-cream without a machine, pour the mixture into a shallow tray and place it in the freezer. Every half hour, take the tray out, stir the mixture hard with a fork, and put it back. After about four hours it should be smooth, firm and ready to scoop into bowls.`,
+  `Before refrigerators, many Australian families kept their food cool in an ice chest: a wooden cupboard lined with metal, with a block of ice in the top. An iceman delivered a fresh block several times a week, because even in a well-made chest the ice slowly melted away.`
+];
+const PASSAGE = {
+  title: "Ice",
+  note: "Read the four extracts below on the theme of ice.",
+  html: EXTRACTS.map((t, i) => `<div class="extract"><h4>Extract ${"ABCD"[i]}</h4><p>${t}</p></div>`).join("")
+};
+
+/* ---- Thinking Skills Q3: squares in a grid ---- */
+const GRID_SVG = (() => {
+  const u = 44; let g = "";
+  for (let i = 0; i <= 3; i++) {
+    g += `<line x1="0" y1="${i * u}" x2="${3 * u}" y2="${i * u}" stroke="${INK}" stroke-width="2.5"/>`;
+    g += `<line x1="${i * u}" y1="0" x2="${i * u}" y2="${3 * u}" stroke="${INK}" stroke-width="2.5"/>`;
+  }
+  return `<svg viewBox="-4 -4 ${3 * u + 8} ${3 * u + 8}" width="${3 * u + 8}" height="${3 * u + 8}" role="img" aria-label="A large square divided into a 3 by 3 grid of small squares">${g}</svg>`;
+})();
+
+/* ---- Maths Q1: map with a ruler ---- */
+const MAP_SVG = (() => {
+  const mm = 3.2, W = 520, H = 250;
+  let bg = "";
+  for (let x = 0; x <= W; x += 40) bg += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#e3e8ef" stroke-width="1"/>`;
+  for (let y = 0; y <= H; y += 40) bg += `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#e3e8ef" stroke-width="1"/>`;
+  bg += `<rect x="0" y="150" width="${W}" height="26" fill="#d5dbe5"/><rect x="150" y="0" width="26" height="${H}" fill="#d5dbe5"/>`;
+  [[70, 60], [95, 80], [300, 60], [420, 210], [60, 215]].forEach(([x, y]) => bg += `<circle cx="${x}" cy="${y}" r="13" fill="#a8cfa3" stroke="#6b8f67" stroke-width="1.5"/>`);
+  let ticks = "";
+  for (let m = 0; m <= 110; m++) {
+    const x = m * mm, h = m % 10 === 0 ? 13 : m % 5 === 0 ? 9 : 5;
+    ticks += `<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke="${INK}" stroke-width="${m % 10 === 0 ? 1.4 : 0.9}"/>`;
+    if (m % 10 === 0) ticks += `<text x="${x}" y="26" font-size="11" text-anchor="middle" fill="${INK}">${m}</text>`;
+  }
+  const xA = 25 * mm, xB = 85 * mm;
+  const house = (x, label, dy) => `<g transform="translate(${x} 0)"><path d="M-6 -12 L6 0 M6 -12 L-6 0" stroke="#c43d3d" stroke-width="2.6" stroke-linecap="round"/>
+      <text x="0" y="${dy}" font-size="13" font-weight="700" text-anchor="middle" fill="${INK}">${label}</text></g>`;
+  const ruler = `<g transform="translate(75 205) rotate(-18)">
+      <rect x="-14" y="0" width="${110 * mm + 28}" height="36" rx="3" fill="#fbf3dc" stroke="${INK}" stroke-width="1.5"/>
+      ${ticks}${house(xA, "Kiri’s house", -18)}${house(xB, "Sam’s house", -18)}</g>`;
+  return `<svg viewBox="0 0 ${W} ${H + 30}" width="${W}" height="${H + 30}" role="img" aria-label="A map with a millimetre ruler laid between Kiri’s house and Sam’s house. Kiri’s house is at the 25 millimetre mark and Sam’s house is at the 85 millimetre mark.">
+    <rect width="${W}" height="${H}" fill="#fff" stroke="${INK}" stroke-width="1.5"/>${bg}${ruler}
+    <text x="${W / 2}" y="${H + 22}" font-size="15" font-weight="600" text-anchor="middle" fill="${INK}">1 cm = 20 m</text></svg>`;
+})();
+
+const SECTIONS = [
+  {
+    id: "reading",
+    name: "Reading",
+    passage: PASSAGE,
+    intro: "Read the four extracts on the theme of ice. For each question, choose the extract (A, B, C or D) which best answers it.",
+    questions: [
+      {
+        stem: "In which extract does the writer describe someone’s feelings changing?",
+        letterOptions: true,
+        options: ["Extract A", "Extract B", "Extract C", "Extract D"],
+        answer: 1,
+        skill: "matching a question to the right text",
+        explain: `<p>In Extract B, Mei starts off terrified: she grips the rail so tightly her knuckles go white. By the third lap she has let go and is laughing. Her feelings change from fear to joy, even though the writer never uses the words “scared” or “happy”.</p>
+                  <p class="why-not">Extract A describes a place, not anyone’s feelings, and the researchers’ mood never changes. Extracts C and D are information texts about things, not people’s feelings.</p>`
+      },
+      {
+        stem: "In which extract does the writer explain why something had to be done again and again?",
+        letterOptions: true,
+        options: ["Extract A", "Extract B", "Extract C", "Extract D"],
+        answer: 3,
+        skill: "noticing the difference between describing and explaining",
+        explain: `<p>Extract D says the iceman delivered a fresh block several times a week, and gives the reason, “<em>because</em> even in a well-made chest the ice slowly melted away.”</p>
+                  <p class="why-not">Extract C is the trap. It also describes something done again and again, stirring every half hour, but it never explains <em>why</em>. It only tells you what to do. The question asks for an explanation, so check that the extract gives a reason and not just an instruction.</p>`
+      },
+      {
+        stem: "In which extract does the writer compare a place to an everyday object?",
+        letterOptions: true,
+        options: ["Extract A", "Extract B", "Extract C", "Extract D"],
+        answer: 0,
+        skill: "recognising a comparison (simile)",
+        explain: `<p>Extract A says the ice plateau stretches away “like an enormous white page that nobody has written on yet”. That compares a place (the plateau) with an everyday object (a page).</p>
+                  <p class="why-not">Extract D describes an ice chest as “a wooden cupboard lined with metal”, but that is a plain description of what the chest actually was, not a comparison, and a chest isn’t a place. Extract B describes the rink but compares it with nothing.</p>`
+      }
+    ]
+  },
+  {
+    id: "thinking",
+    name: "Thinking Skills",
+    intro: "Choose the one correct answer (A, B, C or D).",
+    questions: [
+      {
+        stem: `<p class="quote" style="margin-top:0"><em class="speaker">Principal:</em> “Our school should start the day 30 minutes later, because it would help students learn better.”</p>
+               <p style="margin:10px 0 0">Which one of these statements, if true, best supports the principal’s claim?</p>`,
+        options: ["Many students say they would enjoy having more time to sleep in.",
+                  "Students who start later tend to concentrate better in lessons.",
+                  "The buses would be less crowded if school started later in the day.",
+                  "Some teachers have to travel a long way to get to school."],
+        answer: 1,
+        skill: "choosing the evidence that supports a claim",
+        explain: `<p>The claim is about <em>learning</em>: starting later would help students learn better. B links the later start directly to better concentration in lessons, and concentrating better helps students learn.</p>
+                  <p class="why-not">A is the trap. Students would certainly like a sleep-in, but enjoying something isn’t the same as learning better from it. C and D may be true, but they are about buses and teachers, not about how well students learn.</p>`
+      },
+      {
+        stem: `Five friends ran a race. There were no ties.
+               <ul class="facts">
+                 <li>Ava finished ahead of Ben.</li>
+                 <li>Cara finished ahead of Ben.</li>
+                 <li>Eve finished ahead of Cara.</li>
+                 <li>Dan finished last.</li>
+               </ul>
+               <p style="margin:10px 0 0">Which one of the following must be true?</p>`,
+        options: ["Eve won the race.", "Ben finished fourth.", "Ava finished ahead of Cara.", "Cara finished second."],
+        answer: 1,
+        skill: "deciding what must be true",
+        explain: `<p>Dan is fifth. Ben has Ava and Cara ahead of him, and Eve is ahead of Cara, so at least three runners (Ava, Cara and Eve) finished ahead of Ben. Only Dan is behind him, so Ben must be fourth.</p>
+                  <p class="why-not">The first three places can go in different orders: Eve, Cara, Ava or Ava, Eve, Cara or Eve, Ava, Cara all fit the clues. So Eve might not win (A), Ava might be behind Cara (C), and Cara might be third (D). “Must be true” means true in every possible order.</p>`
+      },
+      {
+        stem: `How many squares of any size are there in this diagram?
+               <div class="figure">${GRID_SVG}</div>`,
+        options: ["9", "10", "13", "14"],
+        answer: 3,
+        skill: "counting systematically",
+        explain: `<p>Count the squares size by size. Small 1 by 1 squares: 9. Medium 2 by 2 squares: 4, one in each corner, overlapping in the middle. The whole 3 by 3 square: 1. Altogether 9 + 4 + 1 = 14.</p>
+                  <p class="why-not">9 (A) only counts the small squares. 10 (B) adds the big square but misses the 2 by 2 squares, which are the easiest to miss because they overlap. 13 (C) forgets the big outside square.</p>`
+      }
+    ]
+  },
+  {
+    id: "maths",
+    name: "Mathematical Reasoning",
+    intro: "Choose the one correct answer (A, B, C, D or E). No calculators.",
+    questions: [
+      {
+        stem: `The map shows where Kiri’s house and Sam’s house are. A ruler has been placed on the map between the two houses.
+               <div class="figure">${MAP_SVG}</div>
+               <p style="margin:0">The ruler measures in millimetres. On the map, 1 centimetre stands for 20 metres in real life.</p>
+               <p style="margin:10px 0 0">How far apart are the two houses in real life?</p>`,
+        options: ["60 m", "120 m", "170 m", "1200 m", "1700 m"],
+        answer: 1,
+        skill: "measuring with a ruler and using a map scale",
+        explain: `<p>Kiri’s house is at 25 mm and Sam’s house is at 85 mm, so they are 85 − 25 = 60 mm apart on the map. 60 mm is 6 cm, and each centimetre stands for 20 m, so the real distance is 6 × 20 = 120 m.</p>
+                  <p class="why-not">170 m (C) is the trap. It reads Sam’s house at 85 mm as if the ruler started at Kiri’s house, but it starts 25 mm before it. 60 m (A) uses 10 m for each centimetre instead of 20 m. 1200 m (D) multiplies the millimetres by 20 without changing them into centimetres first. 1700 m (E) makes both mistakes.</p>`
+      },
+      {
+        stem: `A florist is putting roses into vases. She puts 8 roses in each vase, and fills each vase before she starts the next one. She has 45 roses and uses them all.
+               <p style="margin:10px 0 0">Which vase is she filling when she uses her last rose?</p>`,
+        options: ["5th", "6th", "7th", "8th", "9th"],
+        answer: 1,
+        skill: "interpreting a remainder",
+        explain: `<p>45 ÷ 8 = 5 remainder 5. Five vases are completely full (40 roses), and the 5 roses left over go into the next vase. So the last rose goes into the 6th vase, which ends up with only 5 roses in it.</p>
+                  <p class="why-not">5th (A) is the trap. 45 ÷ 8 gives 5 full vases, but the leftover roses still need a vase, so the answer is the one <em>after</em> the full ones. 7th (C) or later would need more than 48 roses, because 6 full vases already use 8 × 6 = 48, and she only has 45.</p>`
+      },
+      {
+        stem: `The children in a class invent some new money.
+               <ul class="facts">
+                 <li>4 plinks are worth 3 blobs.</li>
+                 <li>2 blobs are worth 5 wizzles.</li>
+               </ul>
+               <p style="margin:10px 0 0">How many plinks are 30 wizzles worth?</p>`,
+        options: ["9 plinks", "12 plinks", "16 plinks", "40 plinks", "100 plinks"],
+        answer: 2,
+        skill: "converting through a chain of exchange rates",
+        explain: `<p>Change wizzles into blobs first. 5 wizzles are worth 2 blobs, and 30 wizzles is 6 lots of 5 wizzles, so it is worth 6 × 2 = 12 blobs. Now change blobs into plinks. 3 blobs are worth 4 plinks, and 12 blobs is 4 lots of 3 blobs, so it is worth 4 × 4 = 16 plinks.</p>
+                  <p class="why-not">12 (B) stops halfway: that’s the number of blobs. 9 (A) does the second exchange the wrong way round (12 ÷ 4 × 3). 100 (E) does the first exchange the wrong way round, turning 30 wizzles into 75 blobs instead of 12. 40 (D) skips the blobs altogether (30 ÷ 3 × 4).</p>`
+      }
+    ]
+  }
+];
+
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const app = document.getElementById("app");
+const hdrSection = document.getElementById("hdr-section");
+let responses = SECTIONS.map(s => s.questions.map(() => null));
+let current = 0;
+
+function showStart() {
+  hdrSection.textContent = "";
+  app.innerHTML = `
+    <div class="sheet instructions">
+      <h1>Practice paper 14</h1>
+      <p class="lead">Three short sections: reading, thinking skills and maths.</p>
+      <div class="plan">
+        ${SECTIONS.map(s => `<div><strong>${s.name}</strong><span>${s.questions.length} questions</span></div>`).join("")}
+      </div>
+      <ol>
+        <li>Take as long as you need — there is no time limit.</li>
+        <li>Answer all three questions in a section, then press <strong>Submit answers</strong> to see how you went.</li>
+        <li>You don’t lose marks for wrong answers, so attempt every question.</li>
+        <li>Your overall mark out of 9 is shown at the end.</li>
+      </ol>
+      <button class="primary" id="start">Start the reading section</button>
+    </div>`;
+  document.getElementById("start").onclick = () => { current = 0; responses = SECTIONS.map(s => s.questions.map(() => null)); showSection(); };
+}
+
+function renderPassage(pass) {
+  return `<div class="passage">
+    <p class="passage-note">${pass.note}</p>
+    <div class="prose"><h3>${pass.title}</h3><div id="passage-body">${typeof pass.html === "function" ? pass.html() : pass.html}</div></div>
+  </div>`;
+}
+
+function refreshPassage() {
+  const pass = SECTIONS[current].passage;
+  const el = document.getElementById("passage-body");
+  if (el && pass && typeof pass.html === "function") el.innerHTML = pass.html();
+}
+
+function renderQuestions(section, mode) {
+  return section.questions.map((q, qi) => {
+    const chosen = responses[current][qi];
+    const opts = q.options.map((o, oi) => {
+      let cls = "option";
+      if (mode === "answer" && chosen === oi) cls += " selected";
+      if (mode === "review") {
+        if (oi === q.answer) cls += " is-correct";
+        else if (chosen === oi) cls += " is-wrong";
+      }
+      return `<button type="button" class="${cls}" data-q="${qi}" data-o="${oi}" ${mode === "review" ? "disabled" : ""}>
+                <span class="letter">${LETTERS[oi]}</span>${q.letterOptions ? "" : `<span>${o}</span>`}</button>`;
+    }).join("");
+    const optCls = q.visualOptions ? "options visual" : (q.letterOptions ? "options letters" : "options");
+    let result = "";
+    if (mode === "review") {
+      const right = chosen === q.answer;
+      const label = chosen === null ? "Not answered" : (right ? "Correct" : "Incorrect");
+      result = `<div class="result-line"><span class="badge ${right ? "ok" : "no"}">${label}</span>
+                <span>Correct answer: ${LETTERS[q.answer]}${chosen !== null && !right ? ` · You chose ${LETTERS[chosen]}` : ""}</span></div>`;
+    }
+    return `<div class="question">
+      <div class="qhead"><span class="qnum">${qi + 1}</span><div class="stem">${q.stem}</div></div>
+      ${result}
+      <div class="${optCls}">${opts}</div>
+      ${mode === "review" ? `<div class="explain">${q.skill ? `<p class="skill">Skill tested: ${q.skill}</p>` : ""}${q.explain}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function showSection() {
+  passMode = "answer";
+  const s = SECTIONS[current];
+  hdrSection.textContent = `${s.name} · Section ${current + 1} of ${SECTIONS.length}`;
+  const qs = `<div>
+      <h2>${s.name}</h2>
+      <p class="lead">${s.intro}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "answer")}
+      <div class="submit-row">
+        <button class="primary" id="submit">Submit answers</button>
+        <span class="status" id="status"></span>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${qs}</div>` : qs}</div>`;
+
+  app.querySelectorAll(".option").forEach(btn => {
+    btn.onclick = () => {
+      const qi = +btn.dataset.q, oi = +btn.dataset.o;
+      responses[current][qi] = oi;
+      app.querySelectorAll(`.option[data-q="${qi}"]`).forEach(b => b.classList.toggle("selected", +b.dataset.o === oi));
+      refreshPassage();
+      updateStatus();
+    };
+  });
+  document.getElementById("submit").onclick = () => {
+    const unanswered = responses[current].filter(r => r === null).length;
+    if (unanswered && !confirm(`You have ${unanswered} unanswered question${unanswered > 1 ? "s" : ""}. Submit anyway?`)) return;
+    showReview();
+  };
+  updateStatus();
+  window.scrollTo(0, 0);
+}
+
+function updateStatus() {
+  const done = responses[current].filter(r => r !== null).length;
+  const el = document.getElementById("status");
+  if (el) el.textContent = `${done} of ${SECTIONS[current].questions.length} answered`;
+}
+
+function sectionScore(i) {
+  return SECTIONS[i].questions.reduce((n, q, qi) => n + (responses[i][qi] === q.answer ? 1 : 0), 0);
+}
+
+function showReview() {
+  passMode = "review";
+  const s = SECTIONS[current];
+  const score = sectionScore(current);
+  const last = current === SECTIONS.length - 1;
+  hdrSection.textContent = `${s.name} · Review`;
+  const body = `<div>
+      <h2>${s.name} — review</h2>
+      <p class="section-score">You scored <b>${score}</b> out of ${s.questions.length}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "review")}
+      <div class="submit-row">
+        <button class="primary" id="next">${last ? "See your overall mark" : `Start the ${SECTIONS[current + 1].name.split(" — ")[0].toLowerCase()} section`}</button>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${body}</div>` : body}</div>`;
+  document.getElementById("next").onclick = () => { if (last) showFinal(); else { current++; showSection(); } };
+  window.scrollTo(0, 0);
+}
+
+function showFinal() {
+  hdrSection.textContent = "Results";
+  const total = SECTIONS.reduce((n, _, i) => n + sectionScore(i), 0);
+  const max = SECTIONS.reduce((n, s) => n + s.questions.length, 0);
+  let verdict;
+  if (total === max) verdict = "Full marks. Every question right, across all three sections.";
+  else if (total >= 7) verdict = "A strong result. Look back at the questions you missed — the explanations show exactly where the trap was.";
+  else if (total >= 5) verdict = "A solid attempt. The sections where you dropped marks are the ones to practise next.";
+  else verdict = "A good start. Re-read the explanations for each section, then try the paper again.";
+  app.innerHTML = `
+    <div class="sheet">
+      <div class="final-score"><div class="big">${total}</div><div class="of">out of ${max}</div></div>
+      <div class="breakdown">
+        ${SECTIONS.map((s, i) => `<div><strong>${sectionScore(i)} / ${s.questions.length}</strong><span>${s.name}</span></div>`).join("")}
+      </div>
+      <p class="verdict center">${verdict}</p>
+      <div class="center"><button class="primary" id="again">Try the paper again</button></div>
+    </div>`;
+  document.getElementById("again").onclick = showStart;
+  window.scrollTo(0, 0);
+}
+
+
+showStart();
+</script>
+</body>
+</html>
